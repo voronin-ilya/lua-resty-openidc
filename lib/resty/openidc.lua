@@ -262,6 +262,10 @@ end
 -- assemble the redirect_uri
 local function openidc_get_redirect_uri(opts, session)
   local path = opts.redirect_uri_path
+  -- FIXME: Do not convert the redirect_uri to an absolute URL
+  if opts.redirect_uri_literal then
+    return opts.redirect_uri
+  end
   if opts.redirect_uri then
     if opts.redirect_uri:sub(1, 1) == '/' then
       path = opts.redirect_uri
