@@ -1135,9 +1135,12 @@ local function openidc_authorization_response(opts, session)
     return nil, err, session.data.original_url, session
   end
 
-  local id_token, err = openidc_load_and_validate_jwt_id_token(opts, json.id_token, session);
-  if err then
-    return nil, err, session.data.original_url, session
+  local id_token
+  if json.id_token then
+    id_token, err = openidc_load_and_validate_jwt_id_token(opts, json.id_token, session);
+    if err then
+      return nil, err, session.data.original_url, session
+    end
   end
 
   -- mark this sessions as authenticated
@@ -1159,7 +1162,7 @@ local function openidc_authorization_response(opts, session)
     if err then
       log(ERROR, "error calling userinfo endpoint: " .. err)
     elseif user then
-      if id_token.sub ~= user.sub then
+      if id_token and id_token.sub ~= user.sub then
         err = "\"sub\" claim in id_token (\"" .. (id_token.sub or "null") .. "\") is not equal to the \"sub\" claim returned from the userinfo endpoint (\"" .. (user.sub or "null") .. "\")"
         log(ERROR, err)
       else
