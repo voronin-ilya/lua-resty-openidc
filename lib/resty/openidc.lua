@@ -265,6 +265,13 @@ local function openidc_get_redirect_uri(opts, session)
   if opts.redirect_uri then
     if opts.redirect_uri:sub(1, 1) == '/' then
       path = opts.redirect_uri
+    --[[
+      FIXME: Do not convert the redirect_uri to an absolute URL
+      if it begins with a period ('.'). Instead, simply return
+      the path, omitting the initial period.
+    ]]--
+    elseif opts.redirect_uri:sub(1, 1) == '.' then
+      return opts.redirect_uri:sub(2)
     else
       return opts.redirect_uri
     end
